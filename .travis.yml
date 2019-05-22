@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker image build -t remram78/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker container run remram78/react-test npm test -- --coverage
+
+after_success:
+  - docker image build -t remram78/multi-client ./client
+  - docker image build -t remram78/multi-nginx ./nginx
+  - docker image build -t remram78/multi-server ./server
+  - docker image build -t remram78/multi-worker ./worker
+  # log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker image push remram78/multi-client
+  - docker image push remram78/multi-nginx
+  - docker image push remram78/multi-server
+  - docker image push remram78/multi-worker
