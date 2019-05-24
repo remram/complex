@@ -1,0 +1,35 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+        {
+            "name": "client",
+            "image": "remram78/multi-client",
+            "hostname": "client",
+            "essential": false
+        },
+        {
+            "name": "server",
+            "image": "remram78/multi-server",
+            "hostname": "api",
+            "essential": false
+        },
+        {
+            "name": "worker",
+            "image": "remram78/multi-worker",
+            "essential": false
+        },
+        {
+            "name": "nginx",
+            "image": "remram78/multi-nginx",
+            "essential": true,
+            "portMappings": {
+                "hostPort": 80,
+                "containerPort": 80
+            },
+            "links": [
+                "client",
+                "server"
+            ]
+        }
+    ]
+}
